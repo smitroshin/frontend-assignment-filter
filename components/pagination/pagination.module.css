@@ -1,0 +1,23 @@
+.wrapper {
+  font-size: 1.2rem;
+}
+
+.wrapper li {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.2rem;
+}
+
+.wrapper a {
+  padding: 0 0.3rem;
+}
+
+.wrapper :global(.selected) a {
+  text-decoration: underline;
+  text-underline-offset: 0.1rem;
+}
+
+.arrow a {
+  display: block;
+  padding: 0;
+}
