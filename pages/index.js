@@ -44,10 +44,10 @@ export default function Home(props) {
         ...parsedQuery,
         page: e.selected + 1,
       };
-      console.timeEnd('getData');
       const res = await APIRequest.get(
         `/product/getAll${qs.stringify(reqParams, { addQueryPrefix: true })}`,
       );
+      console.timeEnd('getData');
       router.push(
         {
           search: qs.stringify(reqParams, { addQueryPrefix: true }),

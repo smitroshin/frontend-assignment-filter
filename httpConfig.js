@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const APIRequest = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     'content-type': 'application/x-www-form-urlencoded',
   },
