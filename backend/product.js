@@ -2,6 +2,8 @@ const qs = require('qs');
 const cache = require('memory-cache');
 const pipe = require('../helpers/pipe').default;
 
+if (process.env.NODE_ENV === 'development') cache.clear();
+
 const CACHE_TIME = 24 * 1000 * 60 * 60;
 
 const productItems = require('../data/miista-export.json').data
@@ -13,7 +15,6 @@ const applyFilters =
     data.filter((itm) => cbs.every((cb) => cb(itm)));
 
 const applyPagination = (data, page, nrPerPage) => {
-  // const page = _page > data.length / nrPerPage ? 1 : _page;
   const beginIndex = page ? page * nrPerPage - nrPerPage : 0;
   const endIndex = beginIndex + nrPerPage;
 
@@ -46,7 +47,7 @@ const colorFilter = (itm, criteria) => {
 
   if (!itmColors) return false;
 
-  return criteria.every((col) =>
+  return criteria.some((col) =>
     itmColors.some((itm2) => new RegExp(itm2.name, 'i').test(col)),
   );
 };
@@ -65,7 +66,7 @@ const categoryTagsFilter = (itm, criteria) => {
 
   if (!itmCatTags) return false;
 
-  return criteria.every((cat) => itmCatTags.includes(cat));
+  return criteria.some((cat) => itmCatTags.includes(cat));
 };
 
 /**

@@ -11,14 +11,17 @@ export function Header(props) {
       style={{ height: 553 }}
     >
       <div className="absolute w-full h-full top-0 left-0 -z-10">
-        <Image
-          src={headerCover}
-          alt="Miista header cover"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="top"
-          quality={100}
-        />
+        <div className="relative w-full h-full">
+          <Image
+            src={headerCover}
+            alt="Miista header cover"
+            layout="fill"
+            objectFit="cover"
+            objectPosition="top"
+            priority
+            quality={100}
+          />
+        </div>
       </div>
       <nav className="flex justify-between items-center text-white text-lg px-4 py-6 z-10 uppercase">
         <div>

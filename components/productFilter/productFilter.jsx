@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import qs from 'qs';
-import { useUpdateEffect } from 'react-use';
+import { usePrevious, useUpdateEffect } from 'react-use';
 import { PriceRangeSlider } from '../priceRangeSlider';
 import { TagsSelect } from '../tagsSelect';
 import { APIRequest } from '../../httpConfig';
@@ -31,13 +31,20 @@ export function ProductFilter(props) {
   const { availableColors, availableCategoryTags, onFilterApplied, ...rest } =
     props;
   const router = useRouter();
-  const parsedQuery = qs.parse(router.query);
-  const [filter, setFilter] = useState({
-    ...parsedQuery,
-    priceRange: parsedQuery.priceRange
-      ? parsedQuery.priceRange.map((itm) => parseInt(itm, 10))
-      : DEFAULT_PRICE_RANGE,
-  });
+  const prevRouterIsReady = usePrevious(router.isReady);
+  const [filter, setFilter] = useState({ priceRange: DEFAULT_PRICE_RANGE });
+
+  useEffect(() => {
+    if (router.isReady && !prevRouterIsReady) {
+      const parsedQuery = qs.parse(router.query);
+      setFilter({
+        ...parsedQuery,
+        priceRange: parsedQuery.priceRange
+          ? parsedQuery.priceRange.map((itm) => parseInt(itm, 10))
+          : DEFAULT_PRICE_RANGE,
+      });
+    }
+  }, [router.isReady, prevRouterIsReady, router.query]);
 
   useUpdateEffect(async () => {
     const res = await APIRequest.get(
