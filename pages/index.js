@@ -35,13 +35,13 @@ export default function Home(props) {
   } = props;
   const [products, setProducts] = useState(productsProps);
   const router = useRouter();
-  const parsedQuery = qs.parse(router.query);
+  const qsQuery = qs.parse(router.query);
 
   const onClickPageHandle = useCallback(
     async (e) => {
       console.time('getData');
       const reqParams = {
-        ...parsedQuery,
+        ...qsQuery,
         page: e.selected + 1,
       };
       const res = await APIRequest.get(
@@ -57,7 +57,7 @@ export default function Home(props) {
       );
       setProducts(res.data);
     },
-    [parsedQuery, router],
+    [qsQuery, router],
   );
 
   const pagination = (
@@ -65,7 +65,7 @@ export default function Home(props) {
       <Pagination
         onPageChange={onClickPageHandle}
         pageCount={products.pagination.total}
-        forcePage={parsedQuery.page - 1 || 0}
+        forcePage={qsQuery.page - 1 || 0}
       />
     </section>
   );
@@ -78,12 +78,15 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <ProductFilter
-        className="container mx-auto px-4 mt-14"
-        availableColors={availableColors}
-        availableCategoryTags={availableCategoryTags}
-        onFilterApplied={setProducts}
-      />
+      {router.isReady && (
+        <ProductFilter
+          className="container mx-auto px-4 mt-14"
+          availableColors={availableColors}
+          availableCategoryTags={availableCategoryTags}
+          onFilterApplied={setProducts}
+          qsQuery={qsQuery}
+        />
+      )}
       <main className="container mx-auto px-4 mb-12">
         {pagination}
         <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 lg:gap-x-12 gap-y-6">

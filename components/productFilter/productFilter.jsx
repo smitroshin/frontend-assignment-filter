@@ -28,23 +28,20 @@ FilterItem.propTypes = {
 };
 
 export function ProductFilter(props) {
-  const { availableColors, availableCategoryTags, onFilterApplied, ...rest } =
-    props;
+  const {
+    availableColors,
+    availableCategoryTags,
+    onFilterApplied,
+    qsQuery,
+    ...rest
+  } = props;
   const router = useRouter();
-  const prevRouterIsReady = usePrevious(router.isReady);
-  const [filter, setFilter] = useState({ priceRange: DEFAULT_PRICE_RANGE });
-
-  useEffect(() => {
-    if (router.isReady && !prevRouterIsReady) {
-      const parsedQuery = qs.parse(router.query);
-      setFilter({
-        ...parsedQuery,
-        priceRange: parsedQuery.priceRange
-          ? parsedQuery.priceRange.map((itm) => parseInt(itm, 10))
-          : DEFAULT_PRICE_RANGE,
-      });
-    }
-  }, [router.isReady, prevRouterIsReady, router.query]);
+  const [filter, setFilter] = useState({
+    ...qsQuery,
+    priceRange: qsQuery.priceRange
+      ? qsQuery.priceRange.map((itm) => parseInt(itm, 10))
+      : DEFAULT_PRICE_RANGE,
+  });
 
   useUpdateEffect(async () => {
     const res = await APIRequest.get(
@@ -130,6 +127,11 @@ ProductFilter.propTypes = {
   availableColors: PropTypes.arrayOf(PropTypes.string),
   availableCategoryTags: PropTypes.arrayOf(PropTypes.string),
   onFilterApplied: PropTypes.func,
+  qsQuery: PropTypes.shape({
+    categoryTags: PropTypes.arrayOf(PropTypes.string),
+    color: PropTypes.arrayOf(PropTypes.string),
+    priceRange: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
 };
 
 ProductFilter.defaultProps = {
