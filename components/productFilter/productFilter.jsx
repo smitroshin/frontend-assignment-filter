@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import qs from 'qs';
-import { usePrevious, useUpdateEffect } from 'react-use';
+import { useUpdateEffect } from 'react-use';
 import { PriceRangeSlider } from '../priceRangeSlider';
 import { TagsSelect } from '../tagsSelect';
 import { APIRequest } from '../../httpConfig';
@@ -28,14 +28,10 @@ FilterItem.propTypes = {
 };
 
 export function ProductFilter(props) {
-  const {
-    availableColors,
-    availableCategoryTags,
-    onFilterApplied,
-    qsQuery,
-    ...rest
-  } = props;
+  const { availableColors, availableCategoryTags, onFilterApplied, ...rest } =
+    props;
   const router = useRouter();
+  const qsQuery = qs.parse(router.query);
   const [filter, setFilter] = useState({
     ...qsQuery,
     priceRange: qsQuery.priceRange
@@ -127,11 +123,6 @@ ProductFilter.propTypes = {
   availableColors: PropTypes.arrayOf(PropTypes.string),
   availableCategoryTags: PropTypes.arrayOf(PropTypes.string),
   onFilterApplied: PropTypes.func,
-  qsQuery: PropTypes.shape({
-    categoryTags: PropTypes.arrayOf(PropTypes.string),
-    color: PropTypes.arrayOf(PropTypes.string),
-    priceRange: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
 };
 
 ProductFilter.defaultProps = {

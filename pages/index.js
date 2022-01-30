@@ -13,7 +13,7 @@ import {
 import { APIRequest } from '../httpConfig';
 import API from '../backend/api';
 
-export function getStaticProps(context) {
+export function getServerSideProps(context) {
   const products = API.product.getAll(context);
   const availableColors = API.product.getAvailableColors();
   const availableCategoryTags = API.product.getAvailableCategoryTags();
@@ -78,15 +78,12 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      {router.isReady && (
-        <ProductFilter
-          className="container mx-auto px-4 mt-14"
-          availableColors={availableColors}
-          availableCategoryTags={availableCategoryTags}
-          onFilterApplied={setProducts}
-          qsQuery={qsQuery}
-        />
-      )}
+      <ProductFilter
+        className="container mx-auto px-4 mt-14"
+        availableColors={availableColors}
+        availableCategoryTags={availableCategoryTags}
+        onFilterApplied={setProducts}
+      />
       <main className="container mx-auto px-4 mb-12">
         {pagination}
         <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 lg:gap-x-12 gap-y-6">
