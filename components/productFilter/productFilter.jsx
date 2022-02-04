@@ -91,12 +91,12 @@ export function ProductFilter(props) {
           <FilterItem title="Color">
             <TagsSelect
               onChange={onChangeHandle}
-              name="color"
-              value={filter.color}
+              name="colors"
+              value={filter.colors}
               tags={availableColors}
             />
           </FilterItem>
-          <FilterItem title="Color">
+          <FilterItem title="Price range">
             <PriceRangeSlider
               min={DEFAULT_PRICE_RANGE[0]}
               max={DEFAULT_PRICE_RANGE[1]}

@@ -14,7 +14,7 @@ const applyFilters =
   (data) =>
     data.filter((itm) => cbs.every((cb) => cb(itm)));
 
-const applyPagination = (data, page, nrPerPage) => {
+const applyPagination = (page, nrPerPage) => (data) => {
   const beginIndex = page ? page * nrPerPage - nrPerPage : 0;
   const endIndex = beginIndex + nrPerPage;
 
@@ -34,13 +34,13 @@ const applyPagination = (data, page, nrPerPage) => {
 };
 
 /**
- * Color filter
+ * Colors filter
  *
  * @param {Object} itm
  * @param {String} criteria
  * @returns {Boolean}
  */
-const colorFilter = (itm, criteria) => {
+const colorsFilter = (criteria) => (itm) => {
   if (!criteria) return true;
 
   const itmColors = itm.node.colorFamily;
@@ -59,7 +59,7 @@ const colorFilter = (itm, criteria) => {
  * @param {String[]} criteria
  * @returns {Boolean}
  */
-const categoryTagsFilter = (itm, criteria) => {
+const categoryTagsFilter = (criteria) => (itm) => {
   if (!criteria) return true;
 
   const itmCatTags = itm.node.categoryTags;
@@ -76,7 +76,7 @@ const categoryTagsFilter = (itm, criteria) => {
  * @param {[String, String]} criteria
  * @returns {boolean}
  */
-const priceRangeFilter = (itm, criteria) => {
+const priceRangeFilter = (criteria) => (itm) => {
   if (!criteria) return true;
 
   const itmPrice = parseFloat(
@@ -100,7 +100,7 @@ const priceRangeFilter = (itm, criteria) => {
  */
 function getAll(req) {
   const { query } = req;
-  const { page = 1, color, priceRange, categoryTags } = qs.parse(query);
+  const { page = 1, colors, priceRange, categoryTags } = qs.parse(query);
   const NR_OF_ITEMS_PER_PAGE = 12;
 
   const cacheKey = qs.stringify({
@@ -112,13 +112,12 @@ function getAll(req) {
   if (cachedData) return cachedData;
 
   const data = pipe(
-    (x) =>
-      applyFilters(
-        (y) => colorFilter(y, color),
-        (y) => categoryTagsFilter(y, categoryTags),
-        (y) => priceRangeFilter(y, priceRange),
-      )(x),
-    (x) => applyPagination(x, page, NR_OF_ITEMS_PER_PAGE),
+    applyFilters(
+      colorsFilter(colors),
+      categoryTagsFilter(categoryTags),
+      priceRangeFilter(priceRange),
+    ),
+    applyPagination(page, NR_OF_ITEMS_PER_PAGE),
   )(productItems);
 
   cache.put(cacheKey, data, CACHE_TIME);
@@ -169,7 +168,7 @@ function getAvailableCategoryTags() {
 }
 
 /**
- * Products
+ * Product
  */
 export default {
   getAll,
